@@ -4,7 +4,7 @@
 
 ### 基于 Docker 的本地调试及服务安装
 
-1. **进入 `./cmd` 目录，执行打包脚本启动服务，并生成 `node_exporter.tar.gz` 安装包**
+1. **进入 `./cmd` 目录，执行打包脚本启动服务，并生成 `process_exporter.tar.gz` 安装包**
    ```bash
    cd ./cmd
    ./build.cmd
