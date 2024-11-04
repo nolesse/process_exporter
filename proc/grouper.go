@@ -110,6 +110,14 @@ func (g *Grouper) Update(iter Iter) (CollectErrors, GroupByName, error) {
 	return cerrs, g.groups(tracked), nil
 }
 
+func (g *Grouper) Update2(iter Iter) (CollectErrors, GroupByName, []Update, error) {
+	cerrs, tracked, err := g.tracker.Update(iter)
+	if err != nil {
+		return cerrs, nil, nil, err
+	}
+	return cerrs, g.groups(tracked), tracked, nil
+}
+
 // Translate the updates into a new GroupByName and update internal history.
 func (g *Grouper) groups(tracked []Update) GroupByName {
 	groups := make(GroupByName)

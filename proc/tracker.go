@@ -93,6 +93,8 @@ type (
 		// Threads are the thread updates for this process, if the Tracker
 		// has trackThreads==true.
 		Threads []ThreadUpdate
+		Pid     int
+		Name    string
 	}
 
 	// CollectErrors describes non-fatal errors found while collecting proc
@@ -459,9 +461,12 @@ func (t *Tracker) Update(iter Iter) (CollectErrors, []Update, error) {
 	}
 
 	tp := []Update{}
-	for _, tproc := range t.tracked {
+	for id, tproc := range t.tracked {
 		if tproc != nil {
-			tp = append(tp, tproc.getUpdate())
+			update := tproc.getUpdate()
+			update.Pid = id.Pid
+			update.Name = tproc.static.Name
+			tp = append(tp, update)
 		}
 	}
 	return colErrs, tp, nil

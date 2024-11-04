@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -10,6 +11,12 @@ import (
 )
 
 var (
+	aliveProcsDesc = prometheus.NewDesc(
+		"namedprocess_alive_procs",
+		"Monitor the alive status of specified process group, where the value is 1 if the process is alive and 0 if the process does not exist.",
+		[]string{"pid", "name", "groupname"},
+		nil)
+
 	numprocsDesc = prometheus.NewDesc(
 		"namedprocess_namegroup_num_procs",
 		"number of processes in this group",
@@ -254,12 +261,17 @@ func (p *NamedProcessCollector) start() {
 }
 
 func (p *NamedProcessCollector) scrape(ch chan<- prometheus.Metric) {
-	permErrs, groups, err := p.Update(p.source.AllProcs())
+	permErrs, groups, tracked, err := p.Update2(p.source.AllProcs())
 	p.scrapePartialErrors += permErrs.Partial
 	if err != nil {
 		p.scrapeErrors++
 		log.Printf("error reading procs: %v", err)
 	} else {
+		for _, up := range tracked {
+			ch <- prometheus.MustNewConstMetric(aliveProcsDesc,
+				prometheus.GaugeValue, float64(1), fmt.Sprint(up.Pid), up.Name, up.GroupName)
+		}
+
 		for gname, gcounts := range groups {
 			ch <- prometheus.MustNewConstMetric(numprocsDesc,
 				prometheus.GaugeValue, float64(gcounts.Procs), gname)

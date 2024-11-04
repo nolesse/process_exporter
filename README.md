@@ -30,13 +30,21 @@
    ├── process_exporter
    └── install.sh
     ``` 
-
-6. **执行 `install.sh` 安装服务**
+6. **修改`config.yml`文件，配置需要监控的进程**
+7. **执行 `install.sh` 安装服务**
    ```shell
    sh install.sh
 
-7. **查看服务存活状态**
+8. **查看服务存活状态**
    ```shell
    systemctl status process-exporter
 
 ---
+
+### metrics
+
+**新增监控指标**
+
+| 名称                       | help                                                                                                                                   | label                             | 含义       |
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------|----------|
+| namedprocess_alive_procs | Monitor the alive status of specified process group, where the value is 1 if the process is alive and 0 if the process does not exist. | pid/name/groupname 进程id/进程名称/进程组名 | 进程存活监控指标 |
