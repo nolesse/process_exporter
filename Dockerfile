@@ -1,20 +1,16 @@
-# Start from a Debian image with the latest version of Go installed
-# and a workspace (GOPATH) configured at /go.
-FROM --platform=$BUILDPLATFORM golang:1.22 AS build
-ARG TARGETARCH
-ARG BUILDPLATFORM
-WORKDIR /go/src/github.com/ncabatoff/process-exporter
-ADD . .
+ARG ARCH="amd64"
+ARG OS="linux"
 
-# Build the process-exporter command inside the container.
-RUN CGO_ENABLED=0 GOARCH=$TARGETARCH make build
+FROM golang:1.22-bullseye AS builder
+# 安装最新版本的Delve调试工具
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
-FROM scratch
-
-COPY --from=build /go/src/github.com/ncabatoff/process-exporter/process-exporter /bin/process-exporter
-
-# Run the process-exporter command by default when the container starts.
-ENTRYPOINT ["/bin/process-exporter"]
-
-# Document that the service listens on port 9256.
+FROM debian:bullseye-slim
+COPY --from=builder /go/bin/dlv /bin/dlv
+COPY ./cmd/process-exporter/process_exporter /bin/process_exporter
+COPY ./config.yml /bin/config.yml
+RUN chmod +x /bin/process_exporter
 EXPOSE 9256
+EXPOSE 2345
+USER root
+CMD ["/bin/dlv", "exec", "/bin/process_exporter", "--headless", "--listen=:2345", "--api-version=2", "--accept-multiclient", "--", "--config.path=/bin/config.yml"]

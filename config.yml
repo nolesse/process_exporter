@@ -1,0 +1,13 @@
+process_names:
+  - comm:
+    - bash
+    - sshd
+    - nginx
+    - cron
+    - systemd
+    - rsyslogd
+    - dbus-daemon
+    - lighttpd
+    - mysqld
+    - apache2
+    - prometheus
