@@ -1,8 +1,8 @@
 #!/bin/bash
 
 mkdir /usr/local/bin/process_exporter
-mv ./process-exporter/process_exporter /usr/local/bin/process_exporter
-mv config.yml /usr/local/bin/process_exporter
+mv -f ./process-exporter/process_exporter /usr/local/bin/process_exporter
+mv -f config.yml /usr/local/bin/process_exporter
 
 chmod +x /usr/local/bin/process_exporter/*
 
@@ -24,6 +24,7 @@ EOF
 
 chmod 754 /usr/lib/systemd/system/process-exporter.service
 systemctl enable process-exporter.service
+systemctl stop process-exporter
 systemctl start process-exporter
 
 if [[ $? = 0 ]]; then

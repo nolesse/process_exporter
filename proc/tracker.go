@@ -5,6 +5,7 @@ import (
 	"log"
 	"os/user"
 	"strconv"
+	"strings"
 	"time"
 
 	seq "github.com/ncabatoff/go-seq/seq"
@@ -466,8 +467,22 @@ func (t *Tracker) Update(iter Iter) (CollectErrors, []Update, error) {
 			update := tproc.getUpdate()
 			update.Pid = id.Pid
 			update.Name = tproc.static.Name
+			// 特殊进程处理
+			if contains(tproc.static.Cmdline, ".lsbatch") {
+				update.Name = tproc.static.Name + ".lsbatch"
+			}
+			log.Print(id.Pid, ":", tproc.static.Name, ":", tproc.static.Cmdline)
 			tp = append(tp, update)
 		}
 	}
 	return colErrs, tp, nil
+}
+
+func contains(strArr []string, key string) bool {
+	for _, str := range strArr {
+		if strings.Contains(str, key) {
+			return true
+		}
+	}
+	return false
 }
