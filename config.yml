@@ -1,13 +1,15 @@
 process_names:
   - comm:
-    - bash
-    - sshd
-    - nginx
-    - cron
-    - systemd
-    - rsyslogd
-    - dbus-daemon
-    - lighttpd
-    - mysqld
-    - apache2
-    - prometheus
+    - ntpd
+    - loadmgr
+    - procmgr
+    - executor
+    - sscheduler
+    - dumpserver
+    - restoreserver
+    - mscheduler
+    - lim
+    - pim
+    - sbatchd
+    - mbschd
+    - mbatchd

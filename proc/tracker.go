@@ -467,9 +467,9 @@ func (t *Tracker) Update(iter Iter) (CollectErrors, []Update, error) {
 			update := tproc.getUpdate()
 			update.Pid = id.Pid
 			update.Name = tproc.static.Name
-			// 特殊进程处理
+			// 作业进程跳过
 			if contains(tproc.static.Cmdline, ".lsbatch") {
-				update.Name = tproc.static.Name + ".lsbatch"
+				continue
 			}
 			log.Print(id.Pid, ":", tproc.static.Name, ":", tproc.static.Cmdline)
 			tp = append(tp, update)
